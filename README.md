@@ -62,7 +62,7 @@ API-документация доступна по адресу: http://127.0.0.
 
 ## Архитектура и данные
 
-Подробности находятся в [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), план спринта — в [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md).
+Подробности находятся в [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), общий план — в [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md), план frontend и логики — в [docs/FRONTEND_LOGIC_PLAN.md](docs/FRONTEND_LOGIC_PLAN.md).
 
 В демо используется `backend/data/products.json`. В продуктивной версии этот слой заменяется адаптером к тестовому API или выгрузке партнёра. Платёжные данные не принимаются и не хранятся.
 
