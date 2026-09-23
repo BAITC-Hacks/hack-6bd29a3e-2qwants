@@ -6,7 +6,11 @@
   <meta name="theme-color" content="#1456a1">
   <title>Quant — прототип для ekt.kz</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="product-media.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js"}}</script>
+  <script src="product-media.js" defer></script>
   <script src="demo.js" defer></script>
+  <script src="api-bridge.js" defer></script>
 </head>
 <body class="with-agent">
   <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -58,7 +62,7 @@
     <div class="agent-bottom">
       <div id="attachment-list" class="attachment-list" hidden></div>
       <form id="chat-form" class="chat-form"><button id="attach-button" class="icon-button" type="button" aria-label="Прикрепить файл" title="Excel, Word, PDF, JPEG"><svg><use href="#i-attach"/></svg></button><input id="chat-input" type="text" autocomplete="off" aria-label="Ваш вопрос" placeholder="Спросите Quant…" maxlength="1000"><button class="chat-form__send" type="submit" aria-label="Отправить"><svg><use href="#i-send"/></svg></button></form>
-      <input id="file-input" type="file" accept=".xlsx,.xls,.doc,.docx,.pdf,.jpg,.jpeg,image/jpeg" multiple hidden>
+      <input id="file-input" type="file" accept=".xlsx,.docx,.pdf,.jpg,.jpeg,image/jpeg" multiple hidden>
       <p class="agent-footnote">Демо на синтетических данных · платёжные данные не запрашиваются</p>
     </div>
   </aside>
