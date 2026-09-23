@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1456a1">
+  <title>Quant — прототип для ekt.kz</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="demo.js" defer></script>
+</head>
+<body class="with-agent">
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol>
+    <symbol id="i-compare" viewBox="0 0 24 24"><path d="M4 7h15m0 0-3-3m3 3-3 3M20 17H5m0 0 3-3m-3 3 3 3"/></symbol>
+    <symbol id="i-certificate" viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6zM16 3v4h3M9 11h7M9 15h5"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M2 4h3l2 11h12l2-8H6M9 20h.1M18 20h.1"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h12v11H2zM14 10h4l4 4v3h-8M6 20h.1M18 20h.1"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 24 24"><path d="M3 8h5V3M21 8h-5V3M3 16h5v5M21 16h-5v5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol>
+    <symbol id="i-attach" viewBox="0 0 24 24"><path d="m8 13 6-6a3 3 0 0 1 4 4l-8 8a5 5 0 0 1-7-7l9-9"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m3 20 18-8L3 4l2 7 8 1-8 1z"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4M3 4v5h5M12 7v5l3 2"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+  </svg>
+  <div class="demo-strip"><div class="site-width demo-strip__inner"><span><b>HACKALEM AI</b> · визуальный прототип, синтетический каталог</span><div class="view-switch" role="group" aria-label="Режим демо"><button id="mode-base" type="button">Без Quant</button><button id="mode-agent" class="active" type="button">С Quant</button></div></div></div>
+  <div class="utility-bar"><div class="site-width utility-bar__inner"><span>⌖ Алматы</span><nav aria-label="Ссылки магазина"><a href="#shop-info">Покупателям</a><a href="#categories">Каталог продукции</a><a href="#shop-info">Доставка и оплата</a></nav><span>Демо · без подключения к ekt.kz</span></div></div>
+  <header class="site-header site-width" id="top"><a class="site-logo" href="#top" aria-label="Электрокомплект — наверх"><span class="site-logo__mark">E</span><span><strong>Электрокомплект</strong><small>электротехника для вашего проекта</small></span></a><a class="catalog-link" href="#categories"><svg><use href="#i-box"/></svg> Каталог</a><form id="site-search" class="site-search"><svg><use href="#i-search"/></svg><input id="site-search-input" aria-label="Поиск по каталогу" placeholder="Поиск по названию или артикулу" required><button type="submit">Найти</button></form><a class="header-cart" href="#cart"><svg><use href="#i-cart"/></svg><span>Корзина</span><b id="cart-count">0</b></a></header>
+  <main>
+    <section class="site-width hero" aria-labelledby="hero-title"><div class="hero__copy"><div class="eyebrow">ЭЛЕКТРОКОМПЛЕКТ · КАЗАХСТАН</div><h1 id="hero-title">Электротехника<br>для ваших задач</h1><p>Кабель, автоматы, светильники и оборудование. Найдите нужную позицию в каталоге или спросите Quant.</p><div class="hero__actions"><a href="#categories" class="button button--white">Открыть каталог</a><button id="hero-ask" type="button" class="button button--outline">Подобрать с Quant <svg><use href="#i-spark"/></svg></button></div></div><div class="hero__art" aria-hidden="true"><div class="hero__ring hero__ring--one"></div><div class="hero__ring hero__ring--two"></div><div class="hero__breaker"><span></span><span></span><span></span></div><div class="hero__caption">Энергия решения</div></div></section>
+    <section class="site-width categories-section" id="categories"><div class="section-head"><div><span class="eyebrow eyebrow--blue">КАТАЛОГ</span><h2>Категории продукции</h2></div><span>Быстрый переход к товару</span></div><div class="category-grid"><button data-category="cable" type="button"><svg><use href="#i-box"/></svg><span>Кабель и провод</span><small>Кабельная продукция</small></button><button data-category="breaker" type="button"><svg><use href="#i-compare"/></svg><span>Автоматика</span><small>Выключатели и защита</small></button><button data-category="light" type="button"><svg><use href="#i-spark"/></svg><span>Светильники</span><small>Свет для любых задач</small></button><button data-category="other" type="button"><svg><use href="#i-search"/></svg><span>Другие категории</span><small>Подбор по запросу</small></button></div></section>
+    <section class="site-width products-section" id="products"><div class="section-head"><div><span class="eyebrow eyebrow--blue">ПОДБОРКА</span><h2>Популярные товары</h2></div><span id="results-label">Демо каталог · 6 позиций</span></div><div id="product-grid" class="product-grid"></div></section>
+    <section class="site-width journey" id="shop-info"><div><span class="eyebrow eyebrow--blue">QUANT ПОМОГАЕТ</span><h2>От вопроса до покупки</h2><p>Спросите о наличии, сравните варианты и проверьте документы. Добавление в корзину произойдёт только после вашего подтверждения.</p></div><div class="journey__steps"><span>01 · Найти</span><span>02 · Сравнить</span><span>03 · Подтвердить</span></div></section>
+    <section class="site-width cart-section" id="cart"><div class="section-head"><div><span class="eyebrow eyebrow--blue">ВАШ ЗАКАЗ</span><h2>Корзина</h2></div><span>Актуальна для этого демо</span></div><div id="cart-items" class="cart-items">Корзина пока пуста. Выберите товар в каталоге.</div><div class="cart-section__bottom"><strong id="cart-total">0 ₸</strong><button id="checkout-button" type="button" class="button button--blue" disabled>Перейти к оформлению <svg><use href="#i-cart"/></svg></button></div><p class="cart-note">Оформление заказа и оплата в этом прототипе не выполняются.</p></section>
+  </main>
+  <button id="agent-launcher" class="agent-launcher" type="button" aria-label="Открыть Quant" aria-expanded="false" aria-controls="agent-panel"><span class="agent-launcher__core"><img src="quant-icon.png" alt=""><i class="cable cable--one"></i><i class="cable cable--two"></i><i class="cable cable--three"></i></span><span class="agent-launcher__text">Спросить Quant</span></button>
+  <aside id="agent-panel" class="agent-panel" role="dialog" aria-label="Quant — помощник ekt.kz" aria-hidden="true">
+    <div class="agent-header">
+      <div class="agent-brand"><img src="quant-icon.png" alt=""><span><strong>Quant</strong><small>ИИ-помощник ekt.kz</small></span></div>
+      <div class="agent-header__actions">
+        <button id="agent-history" class="icon-button" type="button" aria-label="История чатов" title="История чатов"><svg><use href="#i-history"/></svg></button>
+        <div class="language-switch" role="group" aria-label="Язык"><button type="button" data-lang="ru" class="active" aria-pressed="true">RU</button><button type="button" data-lang="kz" aria-pressed="false">KZ</button></div>
+        <button id="agent-cart" class="icon-button" type="button" aria-label="Открыть корзину" title="Корзина"><svg><use href="#i-cart"/></svg></button>
+        <button id="agent-expand" class="icon-button" type="button" aria-label="Развернуть на весь экран" aria-pressed="false" title="На весь экран"><svg><use href="#i-expand"/></svg></button>
+        <button id="agent-close" class="icon-button" type="button" aria-label="Закрыть" title="Закрыть"><svg><use href="#i-close"/></svg></button>
+      </div>
+    </div>
+    <div class="agent-body"><div id="chat-messages" class="chat-messages" role="log" aria-live="polite"></div></div>
+    <section id="history-panel" class="history-panel" aria-label="История чатов" hidden>
+      <div class="history-panel__head"><h2 id="history-title">История чатов</h2><button id="history-close" type="button" aria-label="Закрыть историю">×</button></div>
+      <button id="new-chat" class="history-new" type="button"><svg><use href="#i-plus"/></svg><span id="new-chat-label">Новый чат</span></button>
+      <div id="history-list" class="history-list"></div>
+      <button id="clear-history" class="history-clear" type="button">Очистить историю в этой вкладке</button>
+      <p id="history-note">История хранится только в этой вкладке. Файлы и платёжные данные не сохраняются.</p>
+    </section>
+    <div class="agent-bottom">
+      <div id="attachment-list" class="attachment-list" hidden></div>
+      <form id="chat-form" class="chat-form"><button id="attach-button" class="icon-button" type="button" aria-label="Прикрепить файл" title="Excel, Word, PDF, JPEG"><svg><use href="#i-attach"/></svg></button><input id="chat-input" type="text" autocomplete="off" aria-label="Ваш вопрос" placeholder="Спросите Quant…" maxlength="1000"><button class="chat-form__send" type="submit" aria-label="Отправить"><svg><use href="#i-send"/></svg></button></form>
+      <input id="file-input" type="file" accept=".xlsx,.xls,.doc,.docx,.pdf,.jpg,.jpeg,image/jpeg" multiple hidden>
+      <p class="agent-footnote">Демо на синтетических данных · платёжные данные не запрашиваются</p>
+    </div>
+  </aside>
+</body>
+</html>
