@@ -1,0 +1,10 @@
+{
+  "python.analysis.extraPaths": ["${workspaceFolder}/backend"],
+  "python.terminal.activateEnvironment": true,
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true
+  }
+}
+
