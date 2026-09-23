@@ -114,13 +114,13 @@ class ProblemAdvisor:
             questions = ['Какую задачу хотите решить? Например: отверстие под кабель, светильник на улице или кабель-канал вдоль стены.']
         elif f.scenario == 'drilling':
             if f.material == 'unknown':
-                questions.append('Из чего стена: бетон, кирпич или гипсокартон? По фото это не подтверждается.')
+                questions.append('Из чего стена: бетон, кирпич или гипсокартон? Это поможет подобрать инструмент.')
             if f.diameter_mm is None or f.depth_mm is None:
-                questions.append('Каковы диаметр и глубина отверстия в миллиметрах?')
+                questions.append('Какой диаметр и глубина отверстия нужны, в миллиметрах? Если пока не знаете — напишите, что должно через него проходить.')
             if f.communications_checked is not True:
                 questions.append('Место проверено на скрытую проводку и трубы? До проверки сверление не начинайте.')
             if f.owns_drill is None:
-                questions.append('Перфоратор уже есть? Если да, какой у него патрон?')
+                questions.append('Перфоратор у вас уже есть? Если да, напишите модель или пришлите фото маркировки — проверим совместимость бура.')
             elif f.owns_drill and f.drill_interface == 'unknown':
                 questions.append('Уточните патрон вашего инструмента: SDS-plus или другой?')
             if not questions:
@@ -166,15 +166,28 @@ class ProblemAdvisor:
             else:
                 recommendations.append({'product': p, 'quantity': quantity, 'reason': reason, 'subtotal': p['price'] * quantity})
         status = 'needs_clarification' if questions else ('partial' if missing else ('ready' if recommendations else 'no_match'))
-        lines = [f.observation] if f.observation else []
-        lines += questions
+        # The model's observation is internal context, not customer-facing copy.
+        # Keep the full checklist for selection, but ask one question at a time.
+        if questions:
+            questions = questions[:1]
+            introductions = {
+                'drilling': 'Помогу подобрать инструмент.',
+                'outdoor_light': 'Давайте подберём светильник под ваши условия.',
+                'cable_route': 'Подберём кабель-канал и посчитаем, сколько понадобится.',
+            }
+            lines = [introductions.get(f.scenario, 'Давайте разберёмся с вашей задачей.'), *questions]
+            if f.scenario == 'drilling' and f.communications_checked is not True and 'скрытую проводку' not in questions[0]:
+                lines.append('До проверки стены на скрытые провода и трубы сверление не начинайте.')
+        else:
+            lines = ['Вот что подойдёт под ваши параметры:'] if recommendations else []
         lines += [f"{r['product']['name']} ({r['product']['sku']}) — {r['quantity']} шт. × {r['product']['price']} ₸; остаток {r['product']['stock']}. {r['reason']}" for r in recommendations]
         if missing:
             lines.append('Комплект неполный: некоторых позиций нет или недостаточно на складе.')
         total = sum(r['subtotal'] for r in recommendations)
         if recommendations:
-            lines.append(f'Итого по предложенным позициям: {total} ₸. Для покупки напишите «добавь 1 шт. АРТИКУЛ» для нужной позиции. Затем я запрошу подтверждение. Корзина пока не изменена.')
-        lines += warnings
+            lines.append(f'Всего: {total} ₸. Выберите нужный товар — перед добавлением в корзину я попрошу подтверждение.')
+        # The interface shows the demo notice persistently; retain it in metadata.
+        lines += warnings[1:]
         return {'message': '\n'.join(lines), 'status': status, 'questions': questions,
                 'products': [r['product'] for r in recommendations], 'recommendations': recommendations,
                 'missing': missing, 'total': total, 'warnings': warnings, 'scenario': f.scenario}

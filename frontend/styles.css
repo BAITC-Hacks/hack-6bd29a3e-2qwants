@@ -44,6 +44,15 @@
 
 /* Отдельный шаг подтверждения: кнопки не стоят внутри строки ответа */
 .chat-product__actions{margin-top:12px}
+.chat-product__head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.chat-product__head>strong{flex:1}
+.chat-product .chat-product__related-button{flex:0 0 auto;padding:3px 7px;border-color:var(--line);border-radius:999px;color:var(--mid);font-size:10px;font-weight:700}
+.chat-product__related{display:grid;gap:6px;margin-top:9px;padding:9px;border-radius:8px;background:var(--pale)}
+.chat-product__related-title{color:var(--blue);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.chat-product__related-item{display:flex;justify-content:space-between;gap:10px;padding-top:6px;border-top:1px solid var(--line);font-size:11px;line-height:1.35}
+.chat-product__related-item>span{flex:1}
+.chat-product__related-item>strong{white-space:nowrap;font-size:11px}
+.chat-product__quantity{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font-size:12px;font-weight:700;color:var(--mid)}
 .chat-product__primary{background:var(--blue)!important;color:var(--white)!important}
 .confirm-card{display:grid;gap:8px;width:100%;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--white);white-space:normal}
 .confirm-card__eyebrow{color:var(--blue);font-size:10px;font-weight:800;letter-spacing:.14em}

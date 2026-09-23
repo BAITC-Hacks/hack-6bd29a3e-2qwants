@@ -101,17 +101,42 @@ function renderCatalog(list=products){const root=$('#product-grid');root.replace
 
 function localKey(key){if(state.lang==='ru')return key;return {'Номинальный ток':'Номиналды ток','Количество полюсов':'Полюстер саны','Характеристика':'Сипаттама','Отключающая способность':'Ажырату қабілеті','Сечение':'Қимасы','Материал жилы':'Өзек материалы','Напряжение':'Кернеуі','Длина':'Ұзындығы','Мощность':'Қуаты','Степень защиты':'Қорғаныс дәрежесі','Цветовая температура':'Түс температурасы'}[key]||key;}
 function productDetails(product){const names=Object.entries(product.characteristics).map(([key,value])=>`${localKey(key)}: ${value}`).join(' · ');const warehouses=Object.entries(product.warehouses).map(([name,count])=>`${name} — ${count}`).join('; ');return state.lang==='kz'?`${product.name}\nАртикул: ${product.sku}\nБағасы: ${money(product.price)}\nҚалдық: ${warehouses}\n${names}`:`${product.name}\nАртикул: ${product.sku}\nЦена: ${money(product.price)}\nОстатки: ${warehouses}\n${names}`;}
+function relatedProducts(product){return products.filter(item=>item.sku!==product.sku&&item.categoryName===product.categoryName).slice(0,3);}
+function toggleRelatedProducts(card,product,button){
+  const opened=card.querySelector('.chat-product__related');
+  if(opened){opened.remove();button.setAttribute('aria-expanded','false');return;}
+  const related=relatedProducts(product);if(!related.length)return;
+  const panel=element('div','chat-product__related');
+  panel.append(element('span','chat-product__related-title',state.lang==='kz'?'Ұқсас тауарлар':'Похожие товары'));
+  related.forEach(item=>{const row=element('div','chat-product__related-item');row.append(element('span','',item.name),element('strong','',money(item.price)));panel.append(row);});
+  card.append(panel);button.setAttribute('aria-expanded','true');scrollChat();
+}
 function productCard(product,parent){
-  const card=element('div','chat-product');card.append(element('strong','',product.name),element('small','',`${product.sku} · ${money(product.price)} · ${stock(product)} ${state.lang==='kz'?'дана':'шт.'}`));
+  const card=element('div','chat-product');const head=element('div','chat-product__head');head.append(element('strong','',product.name));
+  const related=relatedProducts(product);if(related.length){const relatedButton=addButton(head,state.lang==='kz'?'Ұқсас':'Похожие',()=>toggleRelatedProducts(card,product,relatedButton));relatedButton.classList.add('chat-product__related-button');relatedButton.setAttribute('aria-expanded','false');}
+  card.append(head,element('small','',`${product.sku} · ${money(product.price)} · ${stock(product)} ${state.lang==='kz'?'дана':'шт.'}`));
   card.append(element('small','',Object.entries(product.characteristics).map(([key,value])=>`${localKey(key)}: ${value}`).join(' · ')));
   const actions=element('div','chat-product__actions');
-  addButton(actions,state.lang==='kz'?'Салыстыру':'Сравнить',()=>{expirePending();addText(`${state.lang==='kz'?'Салыстыру':'Сравнить'}: ${product.name}`,'user','action');showComparison(comparisonGroup(normalize(product.name)));});
-  if(stock(product)>0)addButton(actions,state.lang==='kz'?'Сатып алу':'Купить',()=>send(`добавь 1 шт. ${product.sku}`)).classList.add('chat-product__primary');
+  if(stock(product)>0){
+    let quantity=1;
+    const quantityRow=element('div','chat-product__quantity');
+    quantityRow.append(element('span','',state.lang==='kz'?'Саны':'Количество'));
+    const stepper=element('div','quantity-stepper');
+    const count=element('strong','',String(quantity));
+    const minus=addButton(stepper,'−',()=>{if(quantity<=1)return;quantity--;count.textContent=String(quantity);});
+    minus.setAttribute('aria-label','Уменьшить количество');
+    stepper.append(count);
+    const plus=addButton(stepper,'+',()=>{if(quantity>=stock(product))return;quantity++;count.textContent=String(quantity);});
+    plus.setAttribute('aria-label','Увеличить количество');
+    quantityRow.append(stepper);
+    card.append(quantityRow);
+    addButton(actions,state.lang==='kz'?'Себетке қосу':'Добавить в корзину',()=>send(`добавь ${quantity} шт. ${product.sku}`)).classList.add('chat-product__primary');
+  }
   if(product.certificate){const link=addLink(actions,'Сертификат',product.certificate.url);link.target='_blank';link.rel='noopener';link.addEventListener('click',()=>addText(`${state.lang==='kz'?'Сертификатты ашу':'Открыть сертификат'}: ${product.sku}`,'user','action'));}
   card.append(actions);parent.append(card);
 }
 function showProduct(product){state.lastProduct=product;const bubble=addText(productDetails(product));productCard(product,bubble);}
-function showComparison(items){const summary=items.map(product=>{const key=Object.entries(product.characteristics)[0];return `${product.name} — ${money(product.price)}, ${stock(product)} ${state.lang==='kz'?'дана':'шт.'}, ${localKey(key[0])}: ${key[1]}`;});const bubble=addText(`${copy[state.lang].compare}\n${summary.join('\n')}`);const wrap=element('div','comparison');const table=element('table','');const header=element('tr','');(state.lang==='kz'?['Тауар','Бағасы','Қалдық','Параметр']:['Товар','Цена','Остаток','Параметр']).forEach(label=>header.append(element('th','',label)));table.append(header);items.forEach(product=>{const row=element('tr','');const key=Object.entries(product.characteristics)[0];[product.name,money(product.price),`${stock(product)} ${state.lang==='kz'?'дана':'шт.'}`,`${localKey(key[0])}: ${key[1]}`].forEach(value=>row.append(element('td','',value)));table.append(row);});wrap.append(table);bubble.append(wrap);items.forEach(item=>productCard(item,bubble));scrollChat();}
+function showComparison(items){if(items.length<2){addText(state.lang==='kz'?'Бұл санатта салыстыруға ұқсас тауар жоқ.':'В этой категории пока нет похожего товара для сравнения.');return;}const summary=items.map(product=>{const key=Object.entries(product.characteristics)[0];return `${product.name} — ${money(product.price)}, ${stock(product)} ${state.lang==='kz'?'дана':'шт.'}, ${localKey(key[0])}: ${key[1]}`;});const bubble=addText(`${copy[state.lang].compare}\n${summary.join('\n')}`);const wrap=element('div','comparison');const table=element('table','');const header=element('tr','');(state.lang==='kz'?['Тауар','Бағасы','Қалдық','Параметр']:['Товар','Цена','Остаток','Параметр']).forEach(label=>header.append(element('th','',label)));table.append(header);items.forEach(product=>{const row=element('tr','');const key=Object.entries(product.characteristics)[0];[product.name,money(product.price),`${stock(product)} ${state.lang==='kz'?'дана':'шт.'}`,`${localKey(key[0])}: ${key[1]}`].forEach(value=>row.append(element('td','',value)));table.append(row);});wrap.append(table);bubble.append(wrap);scrollChat();}
 function parseQuantity(text){const match=text.match(/(?:добавь|добавить|положи|купить|қос|сатып ал)\s+(\d+)\b|\b(\d+)\s*(?:шт|штук|дана)\b/i);return match?Number(match[1]||match[2]):1;}
 function expirePending(){if(state.pendingControls){state.pendingControls.forEach(button=>{button.disabled=true;});state.pendingControls=null;}state.pending=null;}
 function prepareAdd(product,quantity){
@@ -144,7 +169,7 @@ function renderCart(){const root=$('#cart-items');root.replaceChildren();if(!sta
 
 function findProduct(query){const text=normalize(query);const direct=[...products].sort((a,b)=>b.sku.length-a.sku.length).find(product=>text.includes(normalize(product.sku))||text.includes(normalize(product.name)));if(direct)return direct;if(/c25/.test(text))return products[1];if(/ва47|c16/.test(text))return products[0];if(/кабел|ввг|3x2.5/.test(text))return products[2];if(/светильник|ip65|led/.test(text))return products[4];return /^(?:его|её|этот|эта|осы|оны|сертификат|аналог|добавь|купить|қос|сатып ал|цена|бағасы)(?:\s|$)/.test(text)?state.lastProduct:null;}
 function analogReason(product,alternative){if(product.category==='cable')return state.lang==='kz'?'Қимасы, өзек материалы мен кернеуі сәйкес; бухта ұзындығы басқа.':'Совпадают сечение, материал жилы и напряжение; длина бухты отличается.';if(product.category==='breaker')return state.lang==='kz'?'Номиналды ток өзгеше: бұл тікелей алмастыру емес, маманмен сәйкестігін тексеріңіз.':'Номинальный ток отличается: это не прямая замена, совместимость нужно проверить со специалистом.';return state.lang==='kz'?'Қорғаныс дәрежесі сәйкес, қуаты өзгеше.':'Степень защиты совпадает, мощность отличается.';}
-function comparisonGroup(text){if(/кабел|ввг/.test(text))return products.filter(item=>item.category==='cable');if(/светильник|led/.test(text))return products.filter(item=>item.category==='light');if(/автомат|ва47|выключател|c16|c25/.test(text))return products.filter(item=>item.category==='breaker');return products.filter(item=>item.category===(state.lastProduct?.category||'breaker'));}
+function comparisonGroup(text){const mentioned=findProduct(text);if(mentioned)return [mentioned,...relatedProducts(mentioned)];if(/кабел|ввг/.test(text))return products.filter(item=>item.category==='cable');if(/светильник|led/.test(text))return products.filter(item=>item.category==='light');if(/автомат|ва47|выключател|c16|c25/.test(text))return products.filter(item=>item.category==='breaker');return state.lastProduct?[state.lastProduct,...relatedProducts(state.lastProduct)]:[];}
 function handleQuestion(input){const text=normalize(input);if(sensitive(input)){addText(copy[state.lang].noPayment);return;}
   if(state.pending&&/^(да,?\s*добавь|подтверждаю добавление|иә,?\s*қос)[.!]?$/i.test(input.trim())){confirmAdd();return;}
   if(state.pending&&/^(отмена|нет|жоқ|бас тарту)[.!]?$/i.test(input.trim())){expirePending();addText(copy[state.lang].cancel);return;}
