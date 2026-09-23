@@ -4,6 +4,7 @@ from uuid import uuid4
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 
 from .cart import CartService
@@ -72,7 +73,7 @@ async def chat_upload_endpoint(
         raise HTTPException(status_code=413, detail="Файл должен быть не больше 10 МБ.")
 
     safe_filename = Path(file.filename or "attachment").name
-    response = chat.respond_with_attachment(
+    response = await run_in_threadpool(chat.respond_with_attachment,
         session_id=session_id,
         message=message,
         filename=safe_filename,

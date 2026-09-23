@@ -1,0 +1,7 @@
+[
+  {"sku":"DEMO-DRILL","name":"Демо: перфоратор SDS-plus","category":"Инструмент","characteristics":{"Патрон":"SDS-plus","Применение":"Бетон и кирпич, бур 8 мм"},"price":42000,"stock":4,"warehouse":"Демо-склад","certificate":null,"tags":["перфоратор","sds-plus"],"synthetic":true},
+  {"sku":"DEMO-BIT-8","name":"Демо: бур SDS-plus 8 мм","category":"Оснастка","characteristics":{"Диаметр":"8 мм","Максимальная глубина отверстия":"50 мм","Материал":"Бетон, кирпич","Патрон":"SDS-plus"},"price":1500,"stock":15,"warehouse":"Демо-склад","certificate":null,"tags":["бур","sds-plus"],"synthetic":true},
+  {"sku":"DEMO-GOGGLES","name":"Демо: защитные очки","category":"Защита","characteristics":{"Назначение":"Защита глаз от частиц материала"},"price":1800,"stock":20,"warehouse":"Демо-склад","certificate":null,"tags":["очки","защита"],"synthetic":true},
+  {"sku":"DEMO-OUTDOOR-18","name":"Демо: наружный светильник 18 Вт IP65","category":"Светильники","characteristics":{"Мощность":"18 Вт","Защита":"IP65","Условия":"Наружная установка под навесом","Температура эксплуатации":"от −30 до +40 °C"},"price":4900,"stock":8,"warehouse":"Демо-склад","certificate":null,"tags":["наружный","светильник"],"synthetic":true},
+  {"sku":"DEMO-CHANNEL","name":"Демо: кабель-канал 20×20 мм, секция 2 м","category":"Кабель-каналы","characteristics":{"Длина секции":"2 м","Применение":"Внутри помещения, один кабель наружным диаметром до 8 мм"},"price":650,"stock":30,"warehouse":"Демо-склад","certificate":null,"tags":["канал","трасса"],"synthetic":true}
+]

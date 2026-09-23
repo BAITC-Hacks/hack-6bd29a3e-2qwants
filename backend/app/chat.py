@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from .catalog import CatalogService
+from .advisor import ProblemAdvisor
 
 ROOT = Path(__file__).parents[2]
 load_dotenv(ROOT / ".env")
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 class ChatService:
     def __init__(self, catalog: CatalogService):
         self.catalog = catalog
+        self.advisor = ProblemAdvisor(catalog)
         self.pending: dict[str, dict] = {}
         self.approved: dict[str, dict] = {}
         self.model = os.getenv("OPENAI_MODEL", "gpt-5.6-luna")
@@ -25,6 +27,16 @@ class ChatService:
 
     def respond(self, session_id: str, message: str) -> dict:
         text = message.lower().strip()
+        if text in ('отмена', 'отмени', 'не добавляй', 'нет', 'новая задача'):
+            self.pending.pop(session_id, None)
+            self.approved.pop(session_id, None)
+            self.advisor.sessions.pop(session_id, None)
+            return {'message': 'Действие отменено. Опишите новую задачу.'}
+        if self.advisor.hazardous(message):
+            self.pending.pop(session_id, None)
+            self.approved.pop(session_id, None)
+            self.advisor.sessions.pop(session_id, None)
+            return self.advisor.danger()
         if self._is_confirmation(text) and session_id in self.pending:
             pending = self.pending.pop(session_id)
             self.approved[session_id] = pending
@@ -33,14 +45,23 @@ class ChatService:
         if self._is_conditions(text):
             return {"message": "Оплата: безналичный расчёт и другие доступные способы на этапе оформления. Доставка: по Казахстану, условия и стоимость зависят от города и заказа. Минимальная партия: уточняется по выбранной позиции; для единичных товаров — от 1 штуки."}
 
+        explicit_sku = any(p['sku'].lower() in text for p in self.catalog.products)
+        if self.advisor.matches(text) or (self.advisor.active(session_id) and not explicit_sku and not self._is_add_request(text)):
+            self.pending.pop(session_id, None)
+            self.approved.pop(session_id, None)
+            return self.advisor.respond(session_id, message, self.client, self.model)
+
         quantity = self._quantity(text)
         product = self.catalog.find_by_sku_or_name(text)
         if product:
             if product["stock"] <= 0:
                 alternatives = self.catalog.alternatives(product)
+                if not alternatives:
+                    return {'message': f'{product["name"]} отсутствует; подходящий аналог в каталоге не найден.', 'products': []}
                 return {"message": f"{product['name']} сейчас отсутствует на складе. Рекомендую аналог: {alternatives[0]['name']} — совпадает категория и сечение, доступно {alternatives[0]['stock']} шт.", "products": alternatives[:2]}
             if self._is_add_request(text):
                 quantity = min(quantity, product["stock"])
+                self.approved.pop(session_id, None)
                 self.pending[session_id] = {"sku": product["sku"], "quantity": quantity}
                 return {"message": f"Добавить {quantity} шт. товара «{product['name']}» в корзину? Остаток: {product['stock']} шт. Ответьте «да, добавь», чтобы подтвердить.", "products": [product], "requires_confirmation": True}
             return {"message": self._product_answer(product), "products": [product]}
@@ -65,6 +86,11 @@ class ChatService:
         content_type: str,
         data: bytes,
     ) -> dict:
+        self.pending.pop(session_id, None)
+        self.approved.pop(session_id, None)
+        if self.advisor.hazardous(message):
+            self.advisor.sessions.pop(session_id, None)
+            return self.advisor.danger()
         if not self.client:
             return {
                 "message": (
@@ -90,6 +116,12 @@ class ChatService:
 
         catalog_json = json.dumps(self.catalog.products, ensure_ascii=False)
         user_text = message.strip() or "Определи товары во вложении и проверь их по каталогу."
+        if content_type.startswith('image/'):
+            advice = self.advisor.respond(session_id, message or 'Что видно и чем можно помочь?', self.client, self.model, attachment)
+            if advice.get('scenario') != 'unknown' or self.advisor.matches(message) or not message.strip():
+                return advice
+            # A plain product photo still uses the existing catalogue analysis.
+            self.advisor.sessions.pop(session_id, None)
         try:
             response = self.client.responses.create(
                 model=self.model,
@@ -168,9 +200,13 @@ class ChatService:
 
     @staticmethod
     def _is_confirmation(text: str) -> bool:
-        return bool(re.search(r"\b(да|подтверждаю|добавляй|добавь)\b", text))
+        return bool(re.fullmatch(r'(да(?:[, ]+добавь)?|подтверждаю|добавляй|добавь)[.! ]*', text))
 
     @staticmethod
     def _quantity(text: str) -> int:
+        explicit = re.search(r'\b(\d+)\s*(?:шт\.?|штук[аи]?|единиц[ыа]?)\b', text)
+        if explicit:
+            return max(1, int(explicit.group(1)))
+        text = re.sub(r'\b(?:EK|DEMO)-[\w-]+', '', text, flags=re.I)
         match = re.search(r"\b(\d+)\s*(?:шт|штук|ед|единиц)?\b", text)
         return max(1, int(match.group(1))) if match else 1

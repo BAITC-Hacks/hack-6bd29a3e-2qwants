@@ -7,6 +7,8 @@ class CatalogService:
     def __init__(self, path: str | None = None):
         catalog_path = Path(path or Path(__file__).parents[1] / "data" / "products.json")
         self.products = json.loads(catalog_path.read_text(encoding="utf-8"))
+        if path is None:
+            self.products += json.loads((catalog_path.parent / 'task_products.json').read_text(encoding='utf-8'))
 
     @staticmethod
     def normalize(text: str) -> str:
@@ -29,6 +31,9 @@ class CatalogService:
         return [product for _, product in sorted(scored, key=lambda item: item[0], reverse=True)]
 
     def find_by_sku_or_name(self, query: str) -> dict | None:
+        exact = [p for p in self.products if re.search(r'(?<![\w-])' + re.escape(p['sku']) + r'(?![\w-])', query, re.I)]
+        if exact:
+            return exact[0]
         results = self.search(query)
         return results[0] if results else None
 
