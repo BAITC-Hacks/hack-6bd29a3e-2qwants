@@ -153,7 +153,7 @@
 │   ├── data/products.json           # синтетический каталог
 │   └── tests/test_smoke.py          # базовые проверки
 ├── frontend/
-│   ├── index.html                   # переход к автономному демо
+│   ├── index.html                   # переход к интегрированному демо
 │   ├── visual-demo.html             # витрина и интерфейс Quant
 │   ├── demo.js                      # клиентская демо-логика без API
 │   ├── demo-certificates.html       # явно помеченные демо-документы
@@ -367,7 +367,7 @@ uvicorn app.main:app --reload
 
 Swagger API: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-Backend партнёра принимает JPG/PNG/WEBP, PDF, Word, Excel и CSV до 10 МБ через `POST /api/chat/upload` (multipart: `session_id`, `message`, `file`). Для анализа нужен `OPENAI_API_KEY` из `.env.example`; без него backend просит уточнить артикул текстом. Тестовый файл: `backend/data/demo_specification.csv`. Автономный `frontend/visual-demo.html` к этому API пока не подключён и не утверждает, что прочитал вложение.
+Backend принимает JPG/PNG/WEBP, PDF, Word, Excel и CSV до 10 МБ через `POST /api/chat/upload` (multipart: `session_id`, `message`, `file`). Для анализа нужен `OPENAI_API_KEY` из `.env.example`; без него backend просит уточнить артикул текстом. Тестовый файл: `backend/data/demo_specification.csv`. `frontend/visual-demo.html` подключён к API и отправляет по одному вложению за запрос.
 
 ### Demo-режим интерфейса
 
@@ -473,7 +473,7 @@ pytest tests
 
 ## Документация
 
-- [Автономный визуальный demo без backend](frontend/visual-demo.html) — откройте файл в браузере; работает без установки пакетов. Есть стартовый экран Quant, горизонтальные свайпаемые подсказки, история чатов, выбор «Сравнить»/«Купить», отдельное подтверждение количества, RU/KZ и полноэкранный режим. Выбор действий отображается сообщениями в диалоге. История и демо-корзина хранятся только в `sessionStorage` текущей вкладки; кнопка очистки истории удаляет только диалоги. Вложения и платёжные данные туда не записываются. Каталог, остатки, цены и документы синтетические; файлы можно прикрепить, но их содержимое пока не анализируется. Оформление заказа не выполняется.
+- [Интегрированный frontend Quant](frontend/visual-demo.html) — открывается через запущенный FastAPI, получает синтетический каталог и корзину с backend, отправляет чат и одно вложение в API. История текста хранится только в `sessionStorage` текущей вкладки; файлы и платёжные данные туда не записываются. Настоящий каталог ekt.kz и оформление заказа пока не подключены.
 - Проверка демо-логики на macOS: `/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Helpers/jsc frontend/demo-smoke.js` из корня проекта.
 - [План работы партнёра и frontend/logic developer](docs/PARTNER_AND_USER_WORKPLAN.md)
 - [Единая концепция продукта](docs/CONCEPT.md)

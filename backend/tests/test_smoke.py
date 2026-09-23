@@ -7,6 +7,14 @@ from app.chat import ChatService
 from app.main import app
 
 
+def test_products_endpoint_uses_backend_catalog():
+    response = TestClient(app).get('/api/products')
+    assert response.status_code == 200
+    products = response.json()['products']
+    assert any(item['sku'] == 'EK-VA4729-C16' for item in products)
+    assert any(item['sku'] == 'DEMO-DRILL' and item['synthetic'] for item in products)
+
+
 def test_catalog_product_answer():
     result = ChatService(CatalogService()).respond("product", "Есть ли автомат ВА47-29 2P C16?")
     assert result["products"][0]["sku"] == "EK-VA4729-C16"

@@ -46,6 +46,11 @@ def health():
     return {"status": "ok", "service": "Quant ^", "site": "ekt.kz"}
 
 
+@app.get('/api/products')
+def get_products():
+    return {'products': catalog.products}
+
+
 @app.post("/api/chat")
 def chat_endpoint(request: ChatRequest):
     response = chat.respond(request.session_id, request.message)
