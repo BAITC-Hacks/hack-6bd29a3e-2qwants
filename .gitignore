@@ -1,5 +1,6 @@
 .DS_Store
 .env
+.venv/
 backend/.venv/
 __pycache__/
 *.py[cod]
@@ -7,4 +8,3 @@ __pycache__/
 node_modules/
 dist/
 coverage/
-

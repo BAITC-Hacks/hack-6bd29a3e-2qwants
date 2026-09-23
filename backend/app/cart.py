@@ -8,11 +8,20 @@ class CartService:
     def get(self, session_id: str) -> list[dict]:
         return deepcopy(self._carts.get(session_id, []))
 
+    def quantity(self, session_id: str, sku: str) -> int:
+        return next(
+            (line["quantity"] for line in self._carts.get(session_id, []) if line["sku"] == sku),
+            0,
+        )
+
     def add(self, session_id: str, product: dict, quantity: int) -> list[dict]:
         cart = self._carts.setdefault(session_id, [])
+        new_quantity = self.quantity(session_id, product["sku"]) + quantity
+        if new_quantity > product["stock"]:
+            raise ValueError(f"Доступно только {product['stock']} шт.")
         for line in cart:
             if line["sku"] == product["sku"]:
-                line["quantity"] += quantity
+                line["quantity"] = new_quantity
                 break
         else:
             cart.append({"sku": product["sku"], "name": product["name"], "price": product["price"], "quantity": quantity})
@@ -21,4 +30,3 @@ class CartService:
     @staticmethod
     def total(cart: list[dict]) -> int:
         return sum(item["price"] * item["quantity"] for item in cart)
-

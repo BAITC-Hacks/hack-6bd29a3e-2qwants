@@ -14,7 +14,9 @@ class CatalogService:
 
     def search(self, query: str) -> list[dict]:
         normalized = self.normalize(query)
-        terms = [term for term in normalized.split() if len(term) > 1]
+        # Короткие служебные слова вроде «вы», «ли» и «на» не должны
+        # случайно совпадать с частями названий товаров (например, «выключатель»).
+        terms = [term for term in normalized.split() if len(term) > 2]
         scored = []
         for product in self.products:
             haystack = self.normalize(" ".join([
@@ -40,4 +42,3 @@ class CatalogService:
             if same_category or shared_tags:
                 candidates.append((int(same_category) * 10 + shared_tags, item))
         return [item for _, item in sorted(candidates, key=lambda pair: pair[0], reverse=True)]
-

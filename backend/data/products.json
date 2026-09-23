@@ -7,7 +7,7 @@
     "price": 1850,
     "stock": 42,
     "warehouse": "Алматы",
-    "certificate": {"name": "Сертификат соответствия ВА47-29", "url": "https://ekt.kz/demo/certificates/va4729.pdf"},
+    "certificate": {"name": "Демо-сертификат соответствия ВА47-29", "url": "/api/certificates/va4729"},
     "tags": ["автомат", "выключатель", "16а", "c16", "2p"]
   },
   {
@@ -18,7 +18,7 @@
     "price": 1920,
     "stock": 18,
     "warehouse": "Алматы",
-    "certificate": {"name": "Сертификат соответствия ВА47-29", "url": "https://ekt.kz/demo/certificates/va4729.pdf"},
+    "certificate": {"name": "Демо-сертификат соответствия ВА47-29", "url": "/api/certificates/va4729"},
     "tags": ["автомат", "выключатель", "25а", "c25", "2p"]
   },
   {
@@ -29,7 +29,7 @@
     "price": 43800,
     "stock": 0,
     "warehouse": "Алматы",
-    "certificate": {"name": "Декларация соответствия ВВГнг-LS", "url": "https://ekt.kz/demo/certificates/vvg.pdf"},
+    "certificate": {"name": "Демо-декларация соответствия ВВГнг-LS", "url": "/api/certificates/vvg"},
     "tags": ["кабель", "ввгнг", "ввгнг-ls", "3x2.5", "медь"]
   },
   {
@@ -40,7 +40,7 @@
     "price": 9200,
     "stock": 12,
     "warehouse": "Алматы",
-    "certificate": {"name": "Декларация соответствия ВВГнг-LS", "url": "https://ekt.kz/demo/certificates/vvg.pdf"},
+    "certificate": {"name": "Демо-декларация соответствия ВВГнг-LS", "url": "/api/certificates/vvg"},
     "tags": ["кабель", "ввгнг", "ввгнг-ls", "3x2.5", "медь", "аналог"]
   },
   {
@@ -55,4 +55,3 @@
     "tags": ["светильник", "led", "18вт", "ip65"]
   }
 ]
-
